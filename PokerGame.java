@@ -1,7 +1,6 @@
 package doudizhu_program;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
 
 //"♦", "♣", "♥", "♠"
 //        "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A", "2"
@@ -9,8 +8,8 @@ import java.util.Collections;
 public class PokerGame {
 
     //牌盒
-    static ArrayList<String> list = new ArrayList<>();
-
+    static ArrayList<Integer> list = new ArrayList<>();//存牌的序号
+    static Map<Integer,String> hm = new HashMap<>();
 
     //1.准备牌
 
@@ -19,18 +18,24 @@ public class PokerGame {
         String[] color = {"♦", "♣", "♥", "♠"};
         String[] number = {"3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K", "A", "2"};
 
+        //序号
+        int serialNumber = 1;
 
+        for (String n : number) {
 
-
-        //添加
-        for (String c : color) {//花色
-            for (String n : number) {//数字
-                list.add(c+n);
+            for (String c : color) {
+                hm.put(serialNumber,c+n);
+                list.add(serialNumber);
+                serialNumber++;
             }
         }
-        //大小王
-        list.add("大王");
-        list.add("小王");
+
+        //大小王添加：
+        hm.put(serialNumber,"小王");
+        list.add(serialNumber);
+        serialNumber++;
+        hm.put(serialNumber,"大王");
+        list.add(serialNumber);
 
 
     }
@@ -41,26 +46,29 @@ public class PokerGame {
         Collections.shuffle(list);
 
         //3.发牌
-        ArrayList<String> lord =new ArrayList<>();
-        ArrayList<String> player1 =new ArrayList<>();
-        ArrayList<String> player2 =new ArrayList<>();
-        ArrayList<String> player3 =new ArrayList<>();
+        TreeSet<Integer> lord = new TreeSet<>();
+        TreeSet<Integer> player1 =new TreeSet<>();
+        TreeSet<Integer> player2 =new TreeSet<>();
+        TreeSet<Integer> player3 =new TreeSet<>();
 
         for(int i=0;i<list.size();i++){
-            String poker = list.get(i);
+
+            //i表示集合中索引，list.get(i)元素：表示排的序号
+            int serialNumber = list.get(i);
+
             if(i<=2){
-                lord.add(poker);
+                lord.add(serialNumber);
                 continue;
             }
             //分批进行循环发放
             if(i%3==0){
-                player1.add(poker);
+                player1.add(serialNumber);
             }
             else if(i%3==1){
-                player2.add(poker);
+                player2.add(serialNumber);
             }
             else {
-                player3.add(poker);
+                player3.add(serialNumber);
             }
 
 
@@ -77,10 +85,11 @@ public class PokerGame {
 
     }
         //4.看牌
-    public void lookPoker(String name,ArrayList<String> list){
+    public void lookPoker(String name,TreeSet<Integer> list){
         System.out.print(name+": ");
-        for (String s : list) {
-            System.out.print(s+" ");
+        for (Integer serialNumber : list) {
+            String poker = hm.get(serialNumber);
+            System.out.print(poker+" ");
         }
         System.out.println();
     }
